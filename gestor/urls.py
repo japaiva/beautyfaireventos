@@ -21,6 +21,7 @@ urlpatterns = [
     path('feiras/criar/', views.feira_create, name='feira_create'),
     path('feiras/<int:pk>/editar/', views.feira_update, name='feira_update'),
     path('feiras/<int:pk>/excluir/', views.feira_delete, name='feira_delete'),
+    path('feiras/<int:pk>/duplicar/', views.feira_duplicate, name='feira_duplicate'),
 
     # Congressos
     path('congressos/', views.congresso_list, name='congresso_list'),

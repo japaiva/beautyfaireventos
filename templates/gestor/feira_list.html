@@ -56,7 +56,7 @@
             <th>Local</th>
             <th>Período</th>
             <th style="width: 120px;" class="text-center">Status</th>
-            <th style="width: 120px;" class="text-end">Ações</th>
+            <th style="width: 150px;" class="text-end">Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -88,6 +88,12 @@
                      class="btn btn-sm btn-outline-primary"
                      title="Editar">
                     <i class="fas fa-edit"></i>
+                  </a>
+                  <a href="{% url 'gestor:feira_duplicate' feira.pk %}"
+                     class="btn btn-sm btn-outline-success"
+                     title="Duplicar para próximo ano"
+                     onclick="return confirm('Deseja duplicar a feira {{ feira.nome }} para o próximo ano?')">
+                    <i class="fas fa-copy"></i>
                   </a>
                   <a href="{% url 'gestor:feira_delete' feira.pk %}"
                      class="btn btn-sm btn-outline-danger"

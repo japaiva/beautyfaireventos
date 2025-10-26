@@ -1,4 +1,5 @@
 {% extends 'gestor/base_gestor.html' %}
+{% load static %}
 
 {% block title %}{{ title }} | Portal de Eventos{% endblock %}
 
@@ -173,7 +174,10 @@
                     </label>
 
                     <!-- Campo hidden para armazenar o JSON -->
-                    <input type="hidden" id="id_credenciamento_categorias" name="credenciamento_categorias" value="{{ form.credenciamento_categorias.initial|default_if_none:'' }}">
+                    <textarea id="id_credenciamento_categorias" name="credenciamento_categorias" style="display: none;"></textarea>
+
+                    <!-- Script para passar dados Python -> JSON válido -->
+                    {{ form.instance.credenciamento_categorias|json_script:"credenciamento-data" }}
 
                     <!-- Container das categorias -->
                     <div id="categorias-container" class="mb-3">
@@ -472,8 +476,8 @@
           <label for="categoria-status" class="form-label fw-semibold">Status *</label>
           <select class="form-select" id="categoria-status" required>
             <option value="">--- Selecione ---</option>
-            <option value="Disponível">Disponível</option>
-            <option value="Em Breve">Em Breve</option>
+            <option value="disponivel">Disponível</option>
+            <option value="em_breve">Em Breve</option>
           </select>
         </div>
 
@@ -505,23 +509,58 @@ document.addEventListener('DOMContentLoaded', function() {
   let editingIndex = null;
   const modal = new bootstrap.Modal(document.getElementById('modalCategoria'));
 
+  // Escape HTML
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
   // Carregar categorias existentes
   function loadCategorias() {
-    const jsonValue = document.getElementById('id_credenciamento_categorias').value;
-    if (jsonValue && jsonValue.trim() !== '') {
+    // Tentar carregar do script tag JSON gerado pelo Django
+    const scriptTag = document.getElementById('credenciamento-data');
+
+    if (scriptTag) {
       try {
-        categorias = JSON.parse(jsonValue);
+        const data = JSON.parse(scriptTag.textContent);
+        if (Array.isArray(data) && data.length > 0) {
+          categorias = data;
+          // Atualizar o textarea hidden
+          document.getElementById('id_credenciamento_categorias').value = JSON.stringify(categorias);
+        }
       } catch (e) {
         console.error('Erro ao carregar categorias:', e);
-        categorias = [];
       }
     }
+
+    // Fallback: tentar carregar do textarea
+    if (categorias.length === 0) {
+      const textarea = document.getElementById('id_credenciamento_categorias');
+      const jsonValue = textarea.value;
+
+      if (jsonValue && jsonValue.trim() !== '') {
+        try {
+          categorias = JSON.parse(jsonValue);
+        } catch (e) {
+          console.error('Erro ao fazer parse do textarea:', e);
+          categorias = [];
+        }
+      }
+    }
+
     renderCategorias();
   }
 
   // Renderizar categorias
   function renderCategorias() {
     const container = document.getElementById('categorias-container');
+
+    if (!container) {
+      console.error('Container categorias-container não encontrado!');
+      return;
+    }
+
     container.innerHTML = '';
 
     if (categorias.length === 0) {
@@ -530,9 +569,18 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     categorias.forEach((cat, index) => {
-      const statusBadge = cat.status === 'Disponível'
-        ? '<span class="badge bg-success">Disponível</span>'
-        : '<span class="badge bg-warning text-dark">Em Breve</span>';
+      // Normalizar status (pode vir como 'disponivel', 'Disponível', 'em_breve', etc)
+      const statusNormalizado = (cat.status || '').toLowerCase().replace(/\s+/g, '_');
+      let statusBadge;
+
+      if (statusNormalizado === 'disponivel' || statusNormalizado === 'disponível') {
+        statusBadge = '<span class="badge bg-success">Disponível</span>';
+      } else if (statusNormalizado === 'em_breve') {
+        statusBadge = '<span class="badge bg-warning text-dark">Em Breve</span>';
+      } else {
+        // Fallback para valores desconhecidos
+        statusBadge = '<span class="badge bg-secondary">' + escapeHtml(cat.status || 'N/A') + '</span>';
+      }
 
       const card = `
         <div class="card mb-2">
@@ -543,7 +591,6 @@ document.addEventListener('DOMContentLoaded', function() {
                   <i class="fas fa-box me-2"></i>${escapeHtml(cat.categoria || 'Sem nome')}
                   ${statusBadge}
                 </h6>
-                ${cat.link ? `<p class="mb-1 small"><i class="fas fa-link me-2"></i><a href="${escapeHtml(cat.link)}" target="_blank">${escapeHtml(cat.link)}</a></p>` : ''}
                 ${cat.observacao ? `<p class="mb-0 small text-muted"><i class="fas fa-comment me-2"></i>${escapeHtml(cat.observacao)}</p>` : ''}
               </div>
               <div class="btn-group btn-group-sm ms-3">
@@ -633,13 +680,6 @@ document.addEventListener('DOMContentLoaded', function() {
     renderCategorias();
     modal.hide();
   });
-
-  // Escape HTML
-  function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-  }
 
   // Inicializar
   loadCategorias();

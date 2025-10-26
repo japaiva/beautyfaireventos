@@ -16,7 +16,8 @@ from .feira import (
     feira_list,
     feira_create,
     feira_update,
-    feira_delete
+    feira_delete,
+    feira_duplicate
 )
 
 # Congresso

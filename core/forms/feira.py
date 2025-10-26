@@ -3,6 +3,7 @@
 from django import forms
 from core.models import Feira
 import json
+import ast
 
 class FeiraForm(forms.ModelForm):
     """Formulário para cadastro de Feiras"""
@@ -90,15 +91,23 @@ class FeiraForm(forms.ModelForm):
         # Se está editando, garantir que o JSON seja válido
         if self.instance and self.instance.pk and self.instance.credenciamento_categorias:
             try:
-                # Se já é uma lista/dict Python, converte pra JSON
-                if isinstance(self.instance.credenciamento_categorias, str):
-                    data = json.loads(self.instance.credenciamento_categorias)
-                else:
-                    data = self.instance.credenciamento_categorias
+                raw_value = self.instance.credenciamento_categorias
 
-                # Converter para JSON compacto (sem indentação, para o hidden input)
-                self.fields['credenciamento_categorias'].initial = json.dumps(data, ensure_ascii=False)
-            except (json.JSONDecodeError, TypeError):
+                # Se já é uma lista/dict Python, converte pra JSON
+                if isinstance(raw_value, str):
+                    # Tentar substituir aspas simples por duplas se for necessário
+                    try:
+                        data = json.loads(raw_value)
+                    except json.JSONDecodeError:
+                        # Tentar converter aspas simples para duplas usando ast
+                        data = ast.literal_eval(raw_value)
+                else:
+                    data = raw_value
+
+                # Converter para JSON válido com aspas duplas
+                json_valid = json.dumps(data, ensure_ascii=False)
+                self.fields['credenciamento_categorias'].initial = json_valid
+            except (json.JSONDecodeError, TypeError, ValueError, SyntaxError):
                 # Se não conseguir fazer parse, deixa vazio
                 self.fields['credenciamento_categorias'].initial = ''
 
