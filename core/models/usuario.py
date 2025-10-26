@@ -6,8 +6,8 @@ from django.utils import timezone
 
 class Usuario(AbstractUser):
     """
-    Modelo de usuário customizado para o SynchroBI
-    Baseado no portalcomercial com foco em gestão financeira
+    Modelo de usuário customizado para o Portal de Eventos Beauty Fair
+    Sistema de gestão de eventos e congressos
     """
     NIVEL_CHOICES = [
         ('admin', 'Administrador'),
