@@ -19,6 +19,17 @@ DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
+# CSRF Trusted Origins (necessário para HTTPS via proxy reverso)
+CSRF_TRUSTED_ORIGINS = [
+    "https://portaleventos.spsolutions.pro",
+    "https://*.spsolutions.pro",
+]
+
+# Configurações de segurança para proxy reverso
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -75,11 +86,11 @@ DATABASES = {
     )
 }
 
-# Configurar schema separado para isolar do Directus
-# Django usará schema 'bfcongressos', Directus continua em 'public'
-DATABASES['default']['OPTIONS'] = {
-    'options': '-c search_path=bfcongressos,public'
-}
+# NOTA: Usando schema 'public' padrão (igual ao rssynchro)
+# Se precisar isolar do Directus no futuro, descomente abaixo:
+# DATABASES['default']['OPTIONS'] = {
+#     'options': '-c search_path=bfcongressos,public'
+# }
 
 # Se preferir configuração direta sem dj-database-url, use:
 # DATABASES = {
@@ -169,8 +180,6 @@ BEAUTY_FAIR_CONFIG = {
 # Security settings para produção
 if not DEBUG:
     SECURE_SSL_REDIRECT = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = 'DENY'
