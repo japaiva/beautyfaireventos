@@ -1,0 +1,55 @@
+{% extends 'gestor/base_gestor.html' %}
+{% load static %}
+
+{% block title %}Dashboard | Beauty Fair Congressos{% endblock %}
+
+{% block content %}
+
+<!-- Ações Rápidas -->
+
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  .border-left-primary {
+    border-left: 0.25rem solid #4e73df !important;
+  }
+  .border-left-success {
+    border-left: 0.25rem solid #1cc88a !important;
+  }
+  .border-left-info {
+    border-left: 0.25rem solid #36b9cc !important;
+  }
+  .border-left-warning {
+    border-left: 0.25rem solid #f6c23e !important;
+  }
+
+  .icon-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+  }
+  
+  .hover-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .hover-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    text-decoration: none;
+  }
+  
+  .hover-card:hover .icon-circle {
+    transform: scale(1.1);
+  }
+
+  .text-xs {
+    font-size: 0.7rem;
+  }
+</style>
+{% endblock %}

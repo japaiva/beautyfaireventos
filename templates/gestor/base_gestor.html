@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}Portal do Gestor - Beauty Fair Congressos{% endblock %}
+
+{% block navbar_title %}
+<span class="app-title-text">Beauty Fair Congressos</span>
+{% endblock %}
+
+{% block nav_items %}
+
+<!-- Divisor vertical -->
+<li class="nav-item">
+  <span class="nav-link" style="border-left: 2px solid #60a5fa; height: 24px; margin: 8px 15px;"></span>
+</li>
+
+<!-- Menu de Cadastros -->
+<li class="nav-item dropdown">
+  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Cadastros
+  </a>
+  <ul class="dropdown-menu dropdown-menu-dark">
+    <li><a class="dropdown-item" href="{% url 'gestor:empresa_list' %}">
+        Empresas
+    </a></li>
+    <li><a class="dropdown-item" href="{% url 'gestor:unidade_tree' %}">
+        Unidades
+    </a></li>
+    <li><a class="dropdown-item" href="{% url 'gestor:centrocusto_tree' %}">
+        Centros de Custo
+    </a></li>
+    <li><a class="dropdown-item" href="{% url 'gestor:contacontabil_tree' %}">
+        Contas Contábeis
+    </a></li>
+
+
+    <li><hr class="dropdown-divider"></li>
+
+    <li><a class="dropdown-item" href="{% url 'gestor:fornecedor_list' %}">
+        Fornecedores
+    </a></li>
+
+    <li><a class="dropdown-item" href="{% url 'gestor:usuario_list' %}">
+        Usuários
+    </a></li>
+    <li><a class="dropdown-item" >
+        Parâmetros
+    </a></li>
+  </ul>
+</li>
+
+<!-- Menu de Movimentos -->
+<li class="nav-item dropdown">
+  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Movimentos
+  </a>
+  <ul class="dropdown-menu dropdown-menu-dark">
+    <li><a class="dropdown-item" href="{% url 'gestor:movimento_list' %}">
+        Movimentos
+    </a></li>
+    <li><a class="dropdown-item" href="{% url 'gestor:movimento_importar' %}">
+        Importar Movimentos
+    </a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="#">
+        Relatório Gerencial
+    </a></li>
+  </ul>
+</li>
+
+{% endblock %}

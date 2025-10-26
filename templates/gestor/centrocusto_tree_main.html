@@ -1,0 +1,125 @@
+<!-- gestor/templates/gestor/centrocusto_tree_main.html - HIERARQUIA DECLARADA -->
+{% extends 'gestor/base_gestor.html' %}
+{% load static %}
+
+{% block title %}Árvore de Centros de Custo | SynchroBI{% endblock %}
+
+{% block extra_css %}
+{% include 'gestor/partials/tree_styles.html' %}
+<style>
+    .main-container { padding: 0; }
+    .card { border-radius: 0; border: none; margin-bottom: 0; border-bottom: 1px solid #dee2e6; }
+    .card:last-child { border-bottom: none; }
+    .modal-xl { max-width: 90%; }
+    .modal-header { background: linear-gradient(135deg, #ff6b6b 0%, #ffa726 100%); color: white; border-bottom: none; }
+    .modal-header .btn-close { filter: invert(1); }
+    .loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center; }
+    .loading-overlay.show { display: flex; }
+    .loading-spinner { background: white; padding: 30px; border-radius: 10px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+    .toast-container { position: fixed; top: 20px; right: 20px; z-index: 1055; }
+    .tree-node.analytic { background: linear-gradient(135deg, #e8f5e8 0%, #ffffff 100%); border-left-color: #28a745 !important; }
+    .tree-node.synthetic { background: linear-gradient(135deg, #fff3cd 0%, #ffffff 100%); border-left-color: #ffc107 !important; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="main-container">
+    <!-- Header -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Centros de Custo</h4>
+            <div class="d-flex gap-2">
+                <button class="btn btn-outline-info btn-sm" onclick="refreshTree()">
+                    <i class="fas fa-sync-alt me-1"></i> Atualizar
+                </button>
+                <button class="btn btn-success btn-sm" onclick="openCreateModal()">
+                    <i class="fas fa-plus me-1"></i> Novo Centro
+                </button>
+                <a href="{% url 'gestor:dashboard' %}" class="btn btn-outline-secondary btn-sm">
+                    <i class="fas fa-arrow-left me-1"></i> Voltar
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Controles -->
+    <div class="card">
+        <div class="card-body">
+            <div class="row g-2">
+                <div class="col-md-8">
+                    <input type="text" id="tree-search" class="form-control" placeholder="Buscar centro de custo...">
+                </div>
+                <div class="col-md-4">
+                    <!-- Espaço para filtros futuros -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Árvore -->
+    <div class="card">
+        <div class="card-body p-0">
+            <ul id="itemTree" class="tree-item"></ul>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="centroCustoModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Carregando...</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary mb-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner">
+        <div class="spinner-border text-primary mb-3"></div>
+        <div>Processando...</div>
+    </div>
+</div>
+
+<!-- Toasts -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- CSRF Token -->
+{% csrf_token %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/tree-manager.js' %}"></script>
+<script>
+let treeManager;
+document.addEventListener('DOMContentLoaded', () => {
+    const config = {
+        treeData: {{ tree_data_json|safe }},
+        updateUrlBase: '{{ update_url_base }}',
+        createUrl: '{% url "gestor:centrocusto_create_modal" %}',
+        apiTreeDataUrl: '{% url "gestor:api_centrocusto_tree_data" %}',
+        modalId: 'centroCustoModal',
+        entityName: 'Centro de Custo',
+        hasCompanyField: false,
+        hasDetailModal: false,
+        useId: false,
+        isDeclarativeHierarchy: true  // NOVO: indica hierarquia declarada
+    };
+    treeManager = new TreeManager(config);
+});
+
+// Funções globais para compatibilidade
+function openCreateModal(event, codigoPai) { treeManager.openCreateModal(event, codigoPai); }
+function openEditModal(event, codigo) { treeManager.openEditModal(event, codigo); }
+function deleteCentroCusto(event, codigo, nome) { treeManager.deleteItem(event, codigo, nome); }
+function refreshTree() { treeManager.refreshTree(); }
+</script>
+{% endblock %}

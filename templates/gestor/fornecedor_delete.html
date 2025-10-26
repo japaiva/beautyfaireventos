@@ -1,0 +1,113 @@
+<!-- gestor/templates/gestor/fornecedor_delete.html - VERSÃO SIMPLIFICADA -->
+{% extends 'gestor/base_gestor.html' %}
+
+{% block title %}Excluir Fornecedor | SynchroBI{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="card shadow">
+    <div class="card-header bg-danger text-white">
+      <h4 class="mb-0">
+        <i class="fas fa-trash me-2"></i>Excluir Fornecedor
+      </h4>
+    </div>
+    <div class="card-body">
+      
+      <div class="alert alert-warning">
+        <p class="mb-3">
+          <strong>Tem certeza que deseja excluir este fornecedor?</strong>
+        </p>
+        
+        <div class="bg-light p-3 rounded mb-3">
+          <div class="row">
+            <div class="col-md-8">
+              <h5 class="mb-2">{{ fornecedor.nome_display }}</h5>
+              <ul class="list-unstyled mb-0">
+                <li><strong>Código:</strong> {{ fornecedor.codigo }}</li>
+                <li><strong>Razão Social:</strong> {{ fornecedor.razao_social }}</li>
+                {% if fornecedor.nome_fantasia %}
+                <li><strong>Nome Fantasia:</strong> {{ fornecedor.nome_fantasia }}</li>
+                {% endif %}
+                {% if fornecedor.cnpj_cpf %}
+                <li><strong>{{ fornecedor.tipo_pessoa }}:</strong> {{ fornecedor.cnpj_cpf_formatado }}</li>
+                {% endif %}
+                {% if movimentos_count > 0 %}
+                <li><strong>Movimentos:</strong> 
+                  <span class="badge bg-warning text-dark">{{ movimentos_count }}</span>
+                </li>
+                {% endif %}
+              </ul>
+            </div>
+            <div class="col-md-4">
+              {% if fornecedor.telefone %}
+                <div class="mb-1">
+                  <i class="fas fa-phone text-muted me-1"></i>
+                  {{ fornecedor.telefone }}
+                </div>
+              {% endif %}
+              {% if fornecedor.email %}
+                <div class="mb-1">
+                  <i class="fas fa-envelope text-muted me-1"></i>
+                  {{ fornecedor.email }}
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        
+        {% if movimentos_count > 0 %}
+        <div class="alert alert-info mb-3">
+          <i class="fas fa-info-circle me-2"></i>
+          Este fornecedor possui {{ movimentos_count }} movimento(s). Os movimentos permanecerão no sistema sem referência.
+        </div>
+        {% endif %}
+        
+        <p class="mb-0 text-danger">
+          <i class="fas fa-exclamation-triangle me-1"></i>
+          <strong>Esta ação não pode ser desfeita!</strong>
+        </p>
+      </div>
+      
+      <!-- Formulário de confirmação -->
+      <form method="post" class="mt-4">
+        {% csrf_token %}
+        
+        <div class="d-flex justify-content-between align-items-center">
+          <a href="{% url 'gestor:fornecedor_list' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-times me-1"></i> Cancelar
+          </a>
+          
+          <div class="d-flex gap-2">
+            {% if movimentos_count > 0 %}
+              <a href="{% url 'gestor:movimento_list' %}?search={{ fornecedor.codigo }}" class="btn btn-info btn-sm">
+                <i class="fas fa-list me-1"></i> Ver Movimentos
+              </a>
+            {% endif %}
+            <a href="{% url 'gestor:fornecedor_update' fornecedor.codigo %}" class="btn btn-secondary">
+              <i class="fas fa-edit me-1"></i> Editar
+            </a>
+            <button type="submit" class="btn btn-danger" onclick="return confirmarExclusao()">
+              <i class="fas fa-trash me-1"></i> Confirmar Exclusão
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+function confirmarExclusao() {
+    const nomeFornecedor = '{{ fornecedor.razao_social|escapejs }}';
+    const movimentos = {{ movimentos_count }};
+    
+    let mensagem = `Confirma a exclusão do fornecedor "${nomeFornecedor}"?`;
+    
+    if (movimentos > 0) {
+        mensagem += `\n\nAtenção: ${movimentos} movimento(s) ficarão sem referência de fornecedor.`;
+    }
+    
+    return confirm(mensagem);
+}
+</script>
+{% endblock %}
