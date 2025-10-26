@@ -40,5 +40,8 @@ media/
 staticfiles/
 collected_static/
 
+# Docker com secrets
+docker-compose.yml
+
 # Migrations (opcional - você decide)
 # */migrations/
