@@ -21,12 +21,11 @@ class FeiraForm(forms.ModelForm):
         label='Status'
     )
 
-    # Campo para editar credenciamento_categorias como JSON formatado
+    # Campo para editar credenciamento_categorias como JSON (gerenciado via JavaScript)
     credenciamento_categorias = forms.CharField(
         required=False,
-        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 8, 'style': 'font-family: monospace;'}),
-        label='Credenciamento - Categorias (JSON)',
-        help_text='Formato: Lista JSON com objetos contendo: categoria, status, link, observacao'
+        widget=forms.HiddenInput(),
+        label='Credenciamento - Categorias'
     )
 
     class Meta:
@@ -44,17 +43,17 @@ class FeiraForm(forms.ModelForm):
         widgets = {
             'nome': forms.TextInput(attrs={'class': 'form-control'}),
             'periodo': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
-            'publico_alvo': forms.TextInput(attrs={'class': 'form-control'}),
-            'credenciamento': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-            'local': forms.TextInput(attrs={'class': 'form-control'}),
-            'diferencial': forms.TextInput(attrs={'class': 'form-control'}),
+            'publico_alvo': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
+            'credenciamento': forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
+            'local': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
+            'diferencial': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
             'Observacoes': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'desconto_nivel_1': forms.TextInput(attrs={'class': 'form-control'}),
             'desconto_nivel_2': forms.TextInput(attrs={'class': 'form-control'}),
             'desconto_cupom_1': forms.TextInput(attrs={'class': 'form-control'}),
             'desconto_cupom_2': forms.TextInput(attrs={'class': 'form-control'}),
-            'ingresso_black': forms.Textarea(attrs={'class': 'form-control', 'rows': 9}),
-            'ingresso_experience': forms.Textarea(attrs={'class': 'form-control', 'rows': 9}),
+            'ingresso_black': forms.Textarea(attrs={'class': 'form-control', 'rows': 11}),
+            'ingresso_experience': forms.Textarea(attrs={'class': 'form-control', 'rows': 11}),
             'Infraestrutura_e_servicos': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'Oportunidades_de_negocio': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'Gatilhos_de_urgencia': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
@@ -88,20 +87,20 @@ class FeiraForm(forms.ModelForm):
         # Tornar campos obrigatórios
         self.fields['nome'].required = True
 
-        # Se está editando, formatar o JSON para exibição
+        # Se está editando, garantir que o JSON seja válido
         if self.instance and self.instance.pk and self.instance.credenciamento_categorias:
             try:
-                # Se já é uma lista/dict Python, converte pra JSON formatado
+                # Se já é uma lista/dict Python, converte pra JSON
                 if isinstance(self.instance.credenciamento_categorias, str):
                     data = json.loads(self.instance.credenciamento_categorias)
                 else:
                     data = self.instance.credenciamento_categorias
 
-                # Formatar JSON com indentação para facilitar edição
-                self.fields['credenciamento_categorias'].initial = json.dumps(data, indent=2, ensure_ascii=False)
+                # Converter para JSON compacto (sem indentação, para o hidden input)
+                self.fields['credenciamento_categorias'].initial = json.dumps(data, ensure_ascii=False)
             except (json.JSONDecodeError, TypeError):
-                # Se não conseguir fazer parse, deixa como está
-                self.fields['credenciamento_categorias'].initial = self.instance.credenciamento_categorias
+                # Se não conseguir fazer parse, deixa vazio
+                self.fields['credenciamento_categorias'].initial = ''
 
     def clean_credenciamento_categorias(self):
         """Valida e converte o JSON de credenciamento_categorias"""

@@ -134,10 +134,22 @@
                 </div>
               </div>
 
-              <!-- LINHA 4: CREDENCIAMENTO (2 COLUNAS) -->
+            </div>
+          </div>
+        </div>
+
+        <!-- CREDENCIAMENTO -->
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header bg-light">
+              <h6 class="card-title mb-0">
+                <i class="fas fa-id-card me-2"></i>Credenciamento
+              </h6>
+            </div>
+            <div class="card-body">
+              <!-- CREDENCIAMENTO TEXTO -->
               <div class="row">
                 <div class="col-12">
-                  <!-- CREDENCIAMENTO -->
                   <div class="mb-3">
                     <label for="{{ form.credenciamento.id_for_label }}" class="form-label fw-semibold">
                       Credenciamento
@@ -152,34 +164,32 @@
                 </div>
               </div>
 
-              <!-- LINHA 5: CREDENCIAMENTO CATEGORIAS (JSON) -->
+              <!-- CREDENCIAMENTO CATEGORIAS (JSON) -->
               <div class="row">
                 <div class="col-12">
-                  <!-- CREDENCIAMENTO CATEGORIAS -->
                   <div class="mb-3">
-                    <label for="{{ form.credenciamento_categorias.id_for_label }}" class="form-label fw-semibold">
-                      {{ form.credenciamento_categorias.label }}
+                    <label class="form-label fw-semibold">
+                      Categorias de Credenciamento
                     </label>
-                    {{ form.credenciamento_categorias }}
-                    {% if form.credenciamento_categorias.help_text %}
-                      <div class="form-text">{{ form.credenciamento_categorias.help_text }}</div>
-                    {% endif %}
+
+                    <!-- Campo hidden para armazenar o JSON -->
+                    <input type="hidden" id="id_credenciamento_categorias" name="credenciamento_categorias" value="{{ form.credenciamento_categorias.initial|default_if_none:'' }}">
+
+                    <!-- Container das categorias -->
+                    <div id="categorias-container" class="mb-3">
+                      <!-- As categorias serão inseridas aqui via JavaScript -->
+                    </div>
+
+                    <!-- Botão adicionar categoria -->
+                    <button type="button" class="btn btn-outline-primary btn-sm" id="btn-add-categoria">
+                      <i class="fas fa-plus me-1"></i> Adicionar Categoria
+                    </button>
+
                     {% if form.credenciamento_categorias.errors %}
-                      <div class="text-danger small mt-1">
+                      <div class="text-danger small mt-2">
                         <i class="fas fa-exclamation-triangle me-1"></i>{{ form.credenciamento_categorias.errors.0 }}
                       </div>
                     {% endif %}
-                    <div class="form-text mt-2">
-                      <strong>Exemplo:</strong>
-                      <pre style="background: #f5f5f5; padding: 10px; border-radius: 4px; font-size: 12px;">[
-  {
-    "categoria": "Público Geral (Vendas até 17/11/2025)",
-    "status": "Disponível",
-    "link": "https://www.sympla.com.br/evento/...",
-    "observacao": ""
-  }
-]</pre>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -439,4 +449,200 @@
     </form>
   </div>
 </div>
+
+<!-- Modal para Editar Categoria -->
+<div class="modal fade" id="modalCategoria" tabindex="-1" aria-labelledby="modalCategoriaLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalCategoriaLabel">
+          <i class="fas fa-box me-2"></i><span id="modal-title-text">Adicionar Categoria</span>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="categoria-index">
+
+        <div class="mb-3">
+          <label for="categoria-nome" class="form-label fw-semibold">Categoria *</label>
+          <input type="text" class="form-control" id="categoria-nome" placeholder="Ex: Público Geral (Vendas até 17/11/2025)" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="categoria-status" class="form-label fw-semibold">Status *</label>
+          <select class="form-select" id="categoria-status" required>
+            <option value="">--- Selecione ---</option>
+            <option value="Disponível">Disponível</option>
+            <option value="Em Breve">Em Breve</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="categoria-link" class="form-label fw-semibold">Link</label>
+          <input type="url" class="form-control" id="categoria-link" placeholder="https://www.sympla.com.br/evento/...">
+        </div>
+
+        <div class="mb-3">
+          <label for="categoria-observacao" class="form-label fw-semibold">Observação</label>
+          <textarea class="form-control" id="categoria-observacao" rows="3"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+          <i class="fas fa-times me-1"></i> Cancelar
+        </button>
+        <button type="button" class="btn btn-primary" id="btn-save-categoria">
+          <i class="fas fa-save me-1"></i> Salvar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  let categorias = [];
+  let editingIndex = null;
+  const modal = new bootstrap.Modal(document.getElementById('modalCategoria'));
+
+  // Carregar categorias existentes
+  function loadCategorias() {
+    const jsonValue = document.getElementById('id_credenciamento_categorias').value;
+    if (jsonValue && jsonValue.trim() !== '') {
+      try {
+        categorias = JSON.parse(jsonValue);
+      } catch (e) {
+        console.error('Erro ao carregar categorias:', e);
+        categorias = [];
+      }
+    }
+    renderCategorias();
+  }
+
+  // Renderizar categorias
+  function renderCategorias() {
+    const container = document.getElementById('categorias-container');
+    container.innerHTML = '';
+
+    if (categorias.length === 0) {
+      container.innerHTML = '<div class="alert alert-info"><i class="fas fa-info-circle me-2"></i>Nenhuma categoria adicionada ainda.</div>';
+      return;
+    }
+
+    categorias.forEach((cat, index) => {
+      const statusBadge = cat.status === 'Disponível'
+        ? '<span class="badge bg-success">Disponível</span>'
+        : '<span class="badge bg-warning text-dark">Em Breve</span>';
+
+      const card = `
+        <div class="card mb-2">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start">
+              <div class="flex-grow-1">
+                <h6 class="mb-2">
+                  <i class="fas fa-box me-2"></i>${escapeHtml(cat.categoria || 'Sem nome')}
+                  ${statusBadge}
+                </h6>
+                ${cat.link ? `<p class="mb-1 small"><i class="fas fa-link me-2"></i><a href="${escapeHtml(cat.link)}" target="_blank">${escapeHtml(cat.link)}</a></p>` : ''}
+                ${cat.observacao ? `<p class="mb-0 small text-muted"><i class="fas fa-comment me-2"></i>${escapeHtml(cat.observacao)}</p>` : ''}
+              </div>
+              <div class="btn-group btn-group-sm ms-3">
+                <button type="button" class="btn btn-outline-primary" onclick="editCategoria(${index})">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button type="button" class="btn btn-outline-danger" onclick="deleteCategoria(${index})">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      container.innerHTML += card;
+    });
+
+    // Atualizar campo hidden
+    document.getElementById('id_credenciamento_categorias').value = JSON.stringify(categorias);
+  }
+
+  // Adicionar categoria
+  document.getElementById('btn-add-categoria').addEventListener('click', function() {
+    editingIndex = null;
+    document.getElementById('modal-title-text').textContent = 'Adicionar Categoria';
+    document.getElementById('categoria-index').value = '';
+    document.getElementById('categoria-nome').value = '';
+    document.getElementById('categoria-status').value = '';
+    document.getElementById('categoria-link').value = '';
+    document.getElementById('categoria-observacao').value = '';
+    modal.show();
+  });
+
+  // Editar categoria (função global)
+  window.editCategoria = function(index) {
+    editingIndex = index;
+    const cat = categorias[index];
+    document.getElementById('modal-title-text').textContent = 'Editar Categoria';
+    document.getElementById('categoria-index').value = index;
+    document.getElementById('categoria-nome').value = cat.categoria || '';
+    document.getElementById('categoria-status').value = cat.status || '';
+    document.getElementById('categoria-link').value = cat.link || '';
+    document.getElementById('categoria-observacao').value = cat.observacao || '';
+    modal.show();
+  };
+
+  // Deletar categoria (função global)
+  window.deleteCategoria = function(index) {
+    if (confirm('Tem certeza que deseja remover esta categoria?')) {
+      categorias.splice(index, 1);
+      renderCategorias();
+    }
+  };
+
+  // Salvar categoria
+  document.getElementById('btn-save-categoria').addEventListener('click', function() {
+    const nome = document.getElementById('categoria-nome').value.trim();
+    const status = document.getElementById('categoria-status').value;
+    const link = document.getElementById('categoria-link').value.trim();
+    const observacao = document.getElementById('categoria-observacao').value.trim();
+
+    if (!nome) {
+      alert('Por favor, preencha o nome da categoria.');
+      return;
+    }
+
+    if (!status) {
+      alert('Por favor, selecione o status.');
+      return;
+    }
+
+    const categoria = {
+      categoria: nome,
+      status: status,
+      link: link,
+      observacao: observacao
+    };
+
+    if (editingIndex !== null) {
+      // Editando
+      categorias[editingIndex] = categoria;
+    } else {
+      // Adicionando
+      categorias.push(categoria);
+    }
+
+    renderCategorias();
+    modal.hide();
+  });
+
+  // Escape HTML
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  // Inicializar
+  loadCategorias();
+});
+</script>
 {% endblock %}
