@@ -1,46 +1,50 @@
-# gestor/views/dashboard.py - Dashboard principal do SynchroBI
+# gestor/views/dashboard.py - Dashboard Beauty Fair Congressos
 
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 import logging
 
-from core.models import Usuario, Unidade, ParametroSistema
+from core.models import Usuario, Feira, Congresso
 
-logger = logging.getLogger('synchrobi')
+logger = logging.getLogger('bfcongressos')
 
 @login_required
 def home(request):
     """Dashboard principal do gestor"""
-    
+
     # Estatísticas básicas
-    unidades_ativas = list(Unidade.objects.filter(ativa=True))  # ← CORRIGIDO
-    total_unidades = len(unidades_ativas)
-    
-    # Contar sintéticas e analíticas
-    unidades_sinteticas = sum(1 for u in unidades_ativas if u.tem_sub_unidades)
-    unidades_analiticas = total_unidades - unidades_sinteticas
-    
     total_usuarios = Usuario.objects.filter(is_active=True).count()
-    total_parametros = ParametroSistema.objects.filter(ativo=True).count()
-    
-    # Unidades recentes
-    unidades_recentes = Unidade.objects.filter(ativa=True).order_by('-data_criacao')[:5]
-    
-    # Parâmetros críticos
-    parametros_criticos = ParametroSistema.objects.filter(
-        ativo=True, categoria='financeiro'
-    ).order_by('nome')[:5]
-    
+
+    # Contar feiras e congressos (sem filtrar os itens para evitar erro de JSON)
+    try:
+        total_feiras = Feira.objects.filter(status='published').count()
+    except:
+        total_feiras = Feira.objects.count()
+
+    try:
+        total_congressos = Congresso.objects.filter(status='published').count()
+    except:
+        total_congressos = Congresso.objects.count()
+
+    # Itens recentes (contar apenas IDs para evitar erro de JSON)
+    try:
+        feiras_recentes = list(Feira.objects.values('id', 'nome').order_by('-id')[:5])
+    except:
+        feiras_recentes = []
+
+    try:
+        congressos_recentes = list(Congresso.objects.values('id', 'nome').order_by('-id')[:5])
+    except:
+        congressos_recentes = []
+
     context = {
-        'total_unidades': total_unidades,
-        'unidades_sinteticas': unidades_sinteticas,
-        'unidades_analiticas': unidades_analiticas,
         'total_usuarios': total_usuarios,
-        'total_parametros': total_parametros,
-        'unidades_recentes': unidades_recentes,
-        'parametros_criticos': parametros_criticos,
+        'total_feiras': total_feiras,
+        'total_congressos': total_congressos,
+        'feiras_recentes': feiras_recentes,
+        'congressos_recentes': congressos_recentes,
     }
-    
+
     return render(request, 'gestor/dashboard.html', context)
 
 @login_required

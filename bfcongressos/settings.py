@@ -86,11 +86,11 @@ DATABASES = {
     )
 }
 
-# NOTA: Usando schema 'public' padrão (igual ao rssynchro)
-# Se precisar isolar do Directus no futuro, descomente abaixo:
-# DATABASES['default']['OPTIONS'] = {
-#     'options': '-c search_path=bfcongressos,public'
-# }
+# Configurar schema separado para isolar do Directus
+# Django usará schema 'bfcongressos', Directus continua em 'public'
+DATABASES['default']['OPTIONS'] = {
+    'options': '-c search_path=bfcongressos,public'
+}
 
 # Se preferir configuração direta sem dj-database-url, use:
 # DATABASES = {

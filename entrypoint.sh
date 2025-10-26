@@ -8,6 +8,14 @@ until psql $DATABASE_URL -c "select 1" > /dev/null 2>&1 || [ $RETRIES -eq 0 ]; d
   sleep 5
 done
 
+# Create schema if it doesn't exist
+echo "Ensuring schema 'bfcongressos' exists..."
+psql $DATABASE_URL -c "CREATE SCHEMA IF NOT EXISTS bfcongressos;" > /dev/null 2>&1
+
+# Apply database migrations
+echo "Applying database migrations..."
+python manage.py migrate
+
 # Collect static files
 echo "Collecting static files..."
 python manage.py collectstatic --no-input

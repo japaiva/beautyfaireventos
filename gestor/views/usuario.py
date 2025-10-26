@@ -142,7 +142,7 @@ def usuario_delete(request, pk):
     context = {
         'usuario': usuario
     }
-    return render(request, 'gestor/usuario_confirm_delete.html', context)
+    return render(request, 'gestor/usuario_delete.html', context)
 
 @login_required 
 def usuario_toggle_status(request, pk):

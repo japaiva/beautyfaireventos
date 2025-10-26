@@ -19,50 +19,17 @@
     Cadastros
   </a>
   <ul class="dropdown-menu dropdown-menu-dark">
-    <li><a class="dropdown-item" href="{% url 'gestor:empresa_list' %}">
-        Empresas
+    <li><a class="dropdown-item" href="{% url 'gestor:feira_list' %}">
+        <i class="fas fa-calendar-alt me-2"></i>Feiras
     </a></li>
-    <li><a class="dropdown-item" href="{% url 'gestor:unidade_tree' %}">
-        Unidades
+    <li><a class="dropdown-item" href="{% url 'gestor:congresso_list' %}">
+        <i class="fas fa-users me-2"></i>Congressos
     </a></li>
-    <li><a class="dropdown-item" href="{% url 'gestor:centrocusto_tree' %}">
-        Centros de Custo
-    </a></li>
-    <li><a class="dropdown-item" href="{% url 'gestor:contacontabil_tree' %}">
-        Contas Contábeis
-    </a></li>
-
 
     <li><hr class="dropdown-divider"></li>
-
-    <li><a class="dropdown-item" href="{% url 'gestor:fornecedor_list' %}">
-        Fornecedores
-    </a></li>
 
     <li><a class="dropdown-item" href="{% url 'gestor:usuario_list' %}">
-        Usuários
-    </a></li>
-    <li><a class="dropdown-item" >
-        Parâmetros
-    </a></li>
-  </ul>
-</li>
-
-<!-- Menu de Movimentos -->
-<li class="nav-item dropdown">
-  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Movimentos
-  </a>
-  <ul class="dropdown-menu dropdown-menu-dark">
-    <li><a class="dropdown-item" href="{% url 'gestor:movimento_list' %}">
-        Movimentos
-    </a></li>
-    <li><a class="dropdown-item" href="{% url 'gestor:movimento_importar' %}">
-        Importar Movimentos
-    </a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="#">
-        Relatório Gerencial
+        <i class="fas fa-user me-2"></i>Usuários
     </a></li>
   </ul>
 </li>

@@ -1,0 +1,212 @@
+{% extends 'gestor/base_gestor.html' %}
+
+{% block title %}Congressos | Portal de Eventos{% endblock %}
+
+{% block content %}
+<div class="card shadow">
+  <div class="card-header bg-light d-flex justify-content-between align-items-center">
+    <h5 class="card-title mb-0">
+      Congressos
+    </h5>
+    <div>
+      <a href="{% url 'gestor:congresso_create' %}" class="btn btn-primary btn-sm">
+        <i class="fas fa-plus me-1"></i> Novo Congresso
+      </a>
+      <a href="{% url 'gestor:dashboard' %}" class="btn btn-outline-secondary btn-sm">
+        <i class="fas fa-arrow-left me-1"></i> Voltar
+      </a>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <!-- FILTROS DE BUSCA -->
+    <div class="row mb-3">
+      <div class="col-12">
+        <form method="get" class="row g-3">
+          <div class="col-md-4">
+            <input type="text" name="search" class="form-control"
+                   placeholder="Buscar por nome ou período..."
+                   value="{{ search }}">
+          </div>
+          <div class="col-md-3">
+            <select name="status" class="form-select">
+              <option value="">Todos os status</option>
+              {% for key, value in status_choices %}
+                <option value="{{ key }}" {% if status_filter == key %}selected{% endif %}>
+                  {{ value }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-3">
+            <select name="feira" class="form-select">
+              <option value="">Todas as feiras</option>
+              {% for feira in feiras_disponiveis %}
+                <option value="{{ feira.id }}" {% if feira_filter == feira.id|stringformat:'s' %}selected{% endif %}>
+                  {{ feira.nome }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-2">
+            <button type="submit" class="btn btn-outline-primary w-100">
+              <i class="fas fa-search me-1"></i> Buscar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th style="width: 80px;">ID</th>
+            <th>Nome</th>
+            <th>Feira</th>
+            <th>Período</th>
+            <th style="width: 120px;" class="text-center">Status</th>
+            <th style="width: 120px;" class="text-end">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for congresso in page_obj.object_list %}
+            <tr>
+              <td>
+                <div class="fw-semibold">#{{ congresso.id }}</div>
+              </td>
+              <td>
+                <div class="fw-medium">{{ congresso.nome|default:"Sem nome" }}</div>
+              </td>
+              <td>
+                {% if congresso.feira %}
+                  {{ congresso.get_feira.nome|default:"-" }}
+                {% else %}
+                  -
+                {% endif %}
+              </td>
+              <td>
+                {{ congresso.Periodo|default:"-" }}
+              </td>
+              <td class="text-center">
+                <span class="badge bg-{% if congresso.status == 'published' %}success{% elif congresso.status == 'draft' %}warning{% else %}secondary{% endif %}">
+                  {% if congresso.status == 'published' %}Publicado
+                  {% elif congresso.status == 'draft' %}Rascunho
+                  {% elif congresso.status == 'archived' %}Arquivado
+                  {% else %}{{ congresso.status }}{% endif %}
+                </span>
+              </td>
+              <td class="text-end">
+                <div class="btn-group" role="group">
+                  <a href="{% url 'gestor:congresso_update' congresso.pk %}"
+                     class="btn btn-sm btn-outline-primary"
+                     title="Editar">
+                    <i class="fas fa-edit"></i>
+                  </a>
+                  <a href="{% url 'gestor:congresso_delete' congresso.pk %}"
+                     class="btn btn-sm btn-outline-danger"
+                     title="Excluir"
+                     onclick="return confirm('Tem certeza que deseja excluir o congresso {{ congresso.nome }}?')">
+                    <i class="fas fa-trash-alt"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="6" class="text-center py-5">
+                <div class="text-muted">
+                  <h6>Nenhum congresso encontrado</h6>
+                  {% if search or status_filter or feira_filter %}
+                    <p class="mb-3">Tente ajustar os filtros de busca.</p>
+                    <a href="{% url 'gestor:congresso_list' %}" class="btn btn-outline-secondary me-2">
+                      <i class="fas fa-times me-1"></i> Limpar Filtros
+                    </a>
+                  {% else %}
+                    <p class="mb-3">Comece criando o primeiro congresso do sistema.</p>
+                  {% endif %}
+                  <a href="{% url 'gestor:congresso_create' %}" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i> {% if search or status_filter or feira_filter %}Novo Congresso{% else %}Criar Primeiro Congresso{% endif %}
+                  </a>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PAGINAÇÃO -->
+    {% if page_obj.has_other_pages %}
+      <nav aria-label="Navegação de páginas" class="mt-4">
+        <ul class="pagination justify-content-center">
+          {% if page_obj.has_previous %}
+            <li class="page-item">
+              <a class="page-link" href="?{% if search %}search={{ search }}&{% endif %}{% if status_filter %}status={{ status_filter }}&{% endif %}{% if feira_filter %}feira={{ feira_filter }}&{% endif %}page=1">
+                <i class="fas fa-angle-double-left"></i>
+              </a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="?{% if search %}search={{ search }}&{% endif %}{% if status_filter %}status={{ status_filter }}&{% endif %}{% if feira_filter %}feira={{ feira_filter }}&{% endif %}page={{ page_obj.previous_page_number }}">
+                <i class="fas fa-angle-left"></i>
+              </a>
+            </li>
+          {% endif %}
+
+          {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+              <li class="page-item active">
+                <span class="page-link">{{ num }}</span>
+              </li>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+              <li class="page-item">
+                <a class="page-link" href="?{% if search %}search={{ search }}&{% endif %}{% if status_filter %}status={{ status_filter }}&{% endif %}{% if feira_filter %}feira={{ feira_filter }}&{% endif %}page={{ num }}">
+                  {{ num }}
+                </a>
+              </li>
+            {% endif %}
+          {% endfor %}
+
+          {% if page_obj.has_next %}
+            <li class="page-item">
+              <a class="page-link" href="?{% if search %}search={{ search }}&{% endif %}{% if status_filter %}status={{ status_filter }}&{% endif %}{% if feira_filter %}feira={{ feira_filter }}&{% endif %}page={{ page_obj.next_page_number }}">
+                <i class="fas fa-angle-right"></i>
+              </a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="?{% if search %}search={{ search }}&{% endif %}{% if status_filter %}status={{ status_filter }}&{% endif %}{% if feira_filter %}feira={{ feira_filter }}&{% endif %}page={{ page_obj.paginator.num_pages }}">
+                <i class="fas fa-angle-double-right"></i>
+              </a>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
+    {% endif %}
+
+
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-submit no filtro quando mudar
+    const statusSelect = document.querySelector('select[name="status"]');
+    const feiraSelect = document.querySelector('select[name="feira"]');
+
+    if (statusSelect) {
+        statusSelect.addEventListener('change', function() {
+            this.form.submit();
+        });
+    }
+
+    if (feiraSelect) {
+        feiraSelect.addEventListener('change', function() {
+            this.form.submit();
+        });
+    }
+
+    console.log('✅ Lista de congressos carregada!');
+});
+</script>
+
+{% endblock %}
