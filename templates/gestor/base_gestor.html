@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 
-{% block title %}Portal do Gestor - Beauty Fair Congressos{% endblock %}
+{% block title %}Portal do Gestor - PORTAL DE EVENTOS{% endblock %}
 
 {% block navbar_title %}
-<span class="app-title-text">Beauty Fair Congressos</span>
+<span class="app-title-text">PORTAL DE EVENTOS</span>
 {% endblock %}
 
 {% block nav_items %}
@@ -13,24 +13,58 @@
   <span class="nav-link" style="border-left: 2px solid #60a5fa; height: 24px; margin: 8px 15px;"></span>
 </li>
 
-<!-- Menu de Cadastros -->
+<!-- Menu: Administração -->
 <li class="nav-item dropdown">
   <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Cadastros
+    Adm
   </a>
   <ul class="dropdown-menu dropdown-menu-dark">
-    <li><a class="dropdown-item" href="{% url 'gestor:feira_list' %}">
-        <i class="fas fa-calendar-alt me-2"></i>Feiras
-    </a></li>
-    <li><a class="dropdown-item" href="{% url 'gestor:congresso_list' %}">
-        <i class="fas fa-users me-2"></i>Congressos
-    </a></li>
-
+    <li><a class="dropdown-item" href="{% url 'gestor:feira_list' %}">Feiras</a></li>
+    <li><a class="dropdown-item" href="{% url 'gestor:congresso_list' %}">Congressos</a></li>
     <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="{% url 'gestor:usuario_list' %}">Usuários</a></li>
+    <li><a class="dropdown-item" href="#" onclick="alert('Em breve!'); return false;">Régua de Atendimento</a></li>
+    <li><a class="dropdown-item" href="#" onclick="alert('Em breve!'); return false;">Integração Sympla</a></li>
+  </ul>
+</li>
 
-    <li><a class="dropdown-item" href="{% url 'gestor:usuario_list' %}">
-        <i class="fas fa-user me-2"></i>Usuários
-    </a></li>
+<!-- Menu: Conversas -->
+<li class="nav-item dropdown">
+  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Conversas
+  </a>
+  <ul class="dropdown-menu dropdown-menu-dark">
+    <li><a class="dropdown-item" href="#" onclick="alert('Em breve!'); return false;">Contatos</a></li>
+    <li><a class="dropdown-item" href="#" onclick="alert('Em breve!'); return false;">Conversas</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="#" onclick="alert('Em breve!'); return false;">Análise de Conversas</a></li>
+  </ul>
+</li>
+
+<!-- Menu: Vendas -->
+<li class="nav-item dropdown">
+  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Vendas
+  </a>
+  <ul class="dropdown-menu dropdown-menu-dark">
+    <li><a class="dropdown-item" href="#" onclick="alert('Em breve!'); return false;">Oportunidades</a></li>
+    <li><a class="dropdown-item" href="#" onclick="alert('Em breve!'); return false;">Conversões</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="#" onclick="alert('Em breve!'); return false;">Campanhas</a></li>
+    <li><a class="dropdown-item" href="#" onclick="alert('Em breve!'); return false;">Tarefas</a></li>
+  </ul>
+</li>
+
+<!-- Menu: Análises -->
+<li class="nav-item dropdown">
+  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Análises
+  </a>
+  <ul class="dropdown-menu dropdown-menu-dark">
+    <li><a class="dropdown-item" href="{% url 'gestor:dashboard' %}">Dashboard</a></li>
+    <li><a class="dropdown-item" href="#" onclick="alert('Em breve!'); return false;">Fechamento de Vendas</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="#" onclick="alert('Em breve!'); return false;">Análise de Campanhas</a></li>
   </ul>
 </li>
 

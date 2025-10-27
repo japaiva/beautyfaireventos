@@ -25,34 +25,267 @@
         </div>
       {% endif %}
 
-      <div class="row">
+      <div class="row g-4">
+        <!-- INFORMAÇÕES GERAIS -->
         <div class="col-12">
-          {% for field in form %}
-            <div class="mb-3">
-              <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
-                {{ field.label }}{% if field.field.required %} *{% endif %}
-              </label>
-              {{ field }}
-              {% if field.help_text %}
-                <div class="form-text">{{ field.help_text }}</div>
-              {% endif %}
-              {% if field.errors %}
-                <div class="text-danger small mt-1">
-                  <i class="fas fa-exclamation-triangle me-1"></i>{{ field.errors.0 }}
-                </div>
-              {% endif %}
+          <div class="card">
+            <div class="card-header bg-light">
+              <h6 class="card-title mb-0">
+                <i class="fas fa-info-circle me-2"></i>Informações Gerais
+              </h6>
             </div>
-          {% endfor %}
+            <div class="card-body">
+              <!-- LINHA 1: NOME E STATUS -->
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="{{ form.nome.id_for_label }}" class="form-label fw-semibold">
+                      Nome do Congresso *
+                    </label>
+                    {{ form.nome }}
+                    {% if form.nome.errors %}
+                      <div class="text-danger small mt-1">
+                        <i class="fas fa-exclamation-triangle me-1"></i>{{ form.nome.errors.0 }}
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="{{ form.status.id_for_label }}" class="form-label fw-semibold">
+                      Status *
+                    </label>
+                    {{ form.status }}
+                    {% if form.status.errors %}
+                      <div class="text-danger small mt-1">
+                        <i class="fas fa-exclamation-triangle me-1"></i>{{ form.status.errors.0 }}
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+
+              <!-- LINHA 2: FEIRA E PERÍODO -->
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="{{ form.feira.id_for_label }}" class="form-label fw-semibold">
+                      Feira
+                    </label>
+                    {{ form.feira }}
+                    {% if form.feira.errors %}
+                      <div class="text-danger small mt-1">
+                        <i class="fas fa-exclamation-triangle me-1"></i>{{ form.feira.errors.0 }}
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="{{ form.Periodo.id_for_label }}" class="form-label fw-semibold">
+                      Período
+                    </label>
+                    {{ form.Periodo }}
+                    {% if form.Periodo.errors %}
+                      <div class="text-danger small mt-1">
+                        <i class="fas fa-exclamation-triangle me-1"></i>{{ form.Periodo.errors.0 }}
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+
+              <!-- LINHA 3: PALESTRANTES -->
+              <div class="row">
+                <div class="col-12">
+                  <div class="mb-3">
+                    <label for="{{ form.palestrantes.id_for_label }}" class="form-label fw-semibold">
+                      Palestrantes
+                    </label>
+                    {{ form.palestrantes }}
+                    {% if form.palestrantes.errors %}
+                      <div class="text-danger small mt-1">
+                        <i class="fas fa-exclamation-triangle me-1"></i>{{ form.palestrantes.errors.0 }}
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+
+              <!-- LINHA 4: DIFERENCIAL E CHATWOOT -->
+              <div class="row">
+                <div class="col-md-8">
+                  <div class="mb-3">
+                    <label for="{{ form.diferencial.id_for_label }}" class="form-label fw-semibold">
+                      Diferencial
+                    </label>
+                    {{ form.diferencial }}
+                    {% if form.diferencial.errors %}
+                      <div class="text-danger small mt-1">
+                        <i class="fas fa-exclamation-triangle me-1"></i>{{ form.diferencial.errors.0 }}
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label for="{{ form.chatwoot.id_for_label }}" class="form-label fw-semibold">
+                      Chatwoot
+                    </label>
+                    {{ form.chatwoot }}
+                    {% if form.chatwoot.errors %}
+                      <div class="text-danger small mt-1">
+                        <i class="fas fa-exclamation-triangle me-1"></i>{{ form.chatwoot.errors.0 }}
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- INGRESSOS -->
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header bg-light">
+              <h6 class="card-title mb-0">
+                <i class="fas fa-ticket-alt me-2"></i>Ingressos
+              </h6>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <!-- INGRESSO BLACK -->
+                <div class="col-md-6">
+                  <h6 class="mb-3 text-primary">
+                    <i class="fas fa-star me-2"></i>Ingresso Black
+                  </h6>
+
+                  <div class="mb-3">
+                    <label for="{{ form.ingresso_black_valor.id_for_label }}" class="form-label fw-semibold">
+                      Valor
+                    </label>
+                    {{ form.ingresso_black_valor }}
+                    {% if form.ingresso_black_valor.errors %}
+                      <div class="text-danger small mt-1">
+                        <i class="fas fa-exclamation-triangle me-1"></i>{{ form.ingresso_black_valor.errors.0 }}
+                      </div>
+                    {% endif %}
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="{{ form.ingresso_black_link.id_for_label }}" class="form-label fw-semibold">
+                      Link
+                    </label>
+                    {{ form.ingresso_black_link }}
+                    {% if form.ingresso_black_link.errors %}
+                      <div class="text-danger small mt-1">
+                        <i class="fas fa-exclamation-triangle me-1"></i>{{ form.ingresso_black_link.errors.0 }}
+                      </div>
+                    {% endif %}
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="{{ form.ingresso_black_lote.id_for_label }}" class="form-label fw-semibold">
+                      Lote
+                    </label>
+                    {{ form.ingresso_black_lote }}
+                    {% if form.ingresso_black_lote.errors %}
+                      <div class="text-danger small mt-1">
+                        <i class="fas fa-exclamation-triangle me-1"></i>{{ form.ingresso_black_lote.errors.0 }}
+                      </div>
+                    {% endif %}
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="{{ form.ingresso_black_status.id_for_label }}" class="form-label fw-semibold">
+                      Status
+                    </label>
+                    {{ form.ingresso_black_status }}
+                    {% if form.ingresso_black_status.errors %}
+                      <div class="text-danger small mt-1">
+                        <i class="fas fa-exclamation-triangle me-1"></i>{{ form.ingresso_black_status.errors.0 }}
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <!-- INGRESSO EXPERIENCE -->
+                <div class="col-md-6">
+                  <h6 class="mb-3 text-success">
+                    <i class="fas fa-gem me-2"></i>Ingresso Experience
+                  </h6>
+
+                  <div class="mb-3">
+                    <label for="{{ form.ingresso_experience_valor.id_for_label }}" class="form-label fw-semibold">
+                      Valor
+                    </label>
+                    {{ form.ingresso_experience_valor }}
+                    {% if form.ingresso_experience_valor.errors %}
+                      <div class="text-danger small mt-1">
+                        <i class="fas fa-exclamation-triangle me-1"></i>{{ form.ingresso_experience_valor.errors.0 }}
+                      </div>
+                    {% endif %}
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="{{ form.ingresso_experience_link.id_for_label }}" class="form-label fw-semibold">
+                      Link
+                    </label>
+                    {{ form.ingresso_experience_link }}
+                    {% if form.ingresso_experience_link.errors %}
+                      <div class="text-danger small mt-1">
+                        <i class="fas fa-exclamation-triangle me-1"></i>{{ form.ingresso_experience_link.errors.0 }}
+                      </div>
+                    {% endif %}
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="{{ form.ingresso_experience_lote.id_for_label }}" class="form-label fw-semibold">
+                      Lote
+                    </label>
+                    {{ form.ingresso_experience_lote }}
+                    {% if form.ingresso_experience_lote.errors %}
+                      <div class="text-danger small mt-1">
+                        <i class="fas fa-exclamation-triangle me-1"></i>{{ form.ingresso_experience_lote.errors.0 }}
+                      </div>
+                    {% endif %}
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="{{ form.ingresso_experience_status.id_for_label }}" class="form-label fw-semibold">
+                      Status
+                    </label>
+                    {{ form.ingresso_experience_status }}
+                    {% if form.ingresso_experience_status.errors %}
+                      <div class="text-danger small mt-1">
+                        <i class="fas fa-exclamation-triangle me-1"></i>{{ form.ingresso_experience_status.errors.0 }}
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="d-flex justify-content-between mt-4 pt-3 border-top">
-        <a href="{% url 'gestor:congresso_list' %}" class="btn btn-outline-secondary">
-          <i class="fas fa-times me-1"></i> Cancelar
-        </a>
-        <button type="submit" class="btn btn-primary">
-          <i class="fas fa-check me-1"></i> Salvar Congresso
-        </button>
+      <!-- BOTÕES -->
+      <div class="row mt-4">
+        <div class="col-12">
+          <div class="d-flex justify-content-end gap-2">
+            <a href="{% url 'gestor:congresso_list' %}" class="btn btn-outline-secondary">
+              <i class="fas fa-times me-1"></i> Cancelar
+            </a>
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-save me-1"></i>
+              {% if form.instance.pk %}Atualizar{% else %}Criar{% endif %} Congresso
+            </button>
+          </div>
+        </div>
       </div>
     </form>
   </div>

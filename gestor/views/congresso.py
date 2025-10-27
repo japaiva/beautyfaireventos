@@ -13,7 +13,8 @@ from core.forms import CongressoForm
 def congresso_list(request):
     """Lista de congressos"""
     search = request.GET.get('search', '')
-    status_filter = request.GET.get('status', '')
+    # Filtro padrão: published (se não especificado)
+    status_filter = request.GET.get('status', 'published')
     feira_filter = request.GET.get('feira', '')
 
     congressos = Congresso.objects.all().order_by('-id')
@@ -24,6 +25,7 @@ def congresso_list(request):
             Q(Periodo__icontains=search)
         )
 
+    # Aplicar filtro de status (sempre aplica, padrão é 'published')
     if status_filter:
         congressos = congressos.filter(status=status_filter)
 
