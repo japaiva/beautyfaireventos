@@ -88,9 +88,10 @@ DATABASES = {
 
 # Configurar schema separado para isolar do Directus
 # Django usará schema 'bfcongressos', Directus continua em 'public'
-DATABASES['default']['OPTIONS'] = {
-    'options': '-c search_path=bfcongressos,public'
-}
+# COMENTADO: Usando schema 'public' padrão para simplificar
+# DATABASES['default']['OPTIONS'] = {
+#     'options': '-c search_path=bfcongressos,public'
+# }
 
 # Se preferir configuração direta sem dj-database-url, use:
 # DATABASES = {
