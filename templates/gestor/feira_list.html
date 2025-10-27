@@ -4,77 +4,86 @@
 
 {% block content %}
 <div class="card shadow">
-  <div class="card-header bg-light d-flex justify-content-between align-items-center">
+  <div class="card-header bg-light d-flex justify-content-between align-items-center py-2">
     <h5 class="card-title mb-0">
-      Feiras
+      <i class="fas fa-store me-2"></i><span class="d-none d-sm-inline">Feiras</span><span class="d-inline d-sm-none">Feiras</span>
     </h5>
     <div>
       <a href="{% url 'gestor:feira_create' %}" class="btn btn-primary btn-sm">
-        <i class="fas fa-plus me-1"></i> Nova Feira
+        <i class="fas fa-plus me-1"></i><span class="d-none d-sm-inline">Nova Feira</span><span class="d-inline d-sm-none">Nova</span>
       </a>
-      <a href="{% url 'gestor:dashboard' %}" class="btn btn-outline-secondary btn-sm">
+      <a href="{% url 'gestor:dashboard' %}" class="btn btn-outline-secondary btn-sm d-none d-md-inline-block">
         <i class="fas fa-arrow-left me-1"></i> Voltar
       </a>
     </div>
   </div>
 
-  <div class="card-body">
+  <div class="card-body py-2">
     <!-- FILTROS DE BUSCA -->
-    <div class="row mb-3">
-      <div class="col-12">
-        <form method="get" class="row g-3">
-          <div class="col-md-6">
-            <input type="text" name="search" class="form-control"
-                   placeholder="Buscar por nome, local ou período..."
-                   value="{{ search }}">
-          </div>
-          <div class="col-md-4">
-            <select name="status" class="form-select">
-              <option value="">Todos os status</option>
-              {% for key, value in status_choices %}
-                <option value="{{ key }}" {% if status_filter == key %}selected{% endif %}>
-                  {{ value }}
-                </option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="col-md-2">
-            <button type="submit" class="btn btn-outline-primary w-100">
-              <i class="fas fa-search me-1"></i> Buscar
-            </button>
-          </div>
-        </form>
-      </div>
+    <div class="card-header bg-white py-2 mb-3">
+      <form method="get" class="row g-2 align-items-center">
+        <div class="col-6 col-md-3">
+          <label class="form-label text-muted mb-1 d-none d-md-block" style="font-size: 0.8rem;">Status</label>
+          <select name="status" class="form-select form-select-sm">
+            <option value="">Todos</option>
+            {% for key, value in status_choices %}
+              <option value="{{ key }}" {% if status_filter == key %}selected{% endif %}>
+                {{ value }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-9 col-md-7">
+          <label class="form-label text-muted mb-1 d-none d-md-block" style="font-size: 0.8rem;">Buscar</label>
+          <input type="text" name="search" class="form-control form-control-sm"
+                 placeholder="Nome, local ou período..."
+                 value="{{ search }}">
+        </div>
+        <div class="col-3 col-md-2">
+          <label class="form-label text-muted mb-1 d-none d-md-block" style="font-size: 0.8rem;">&nbsp;</label>
+          <button type="submit" class="btn btn-sm btn-primary w-100">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+      </form>
     </div>
 
     <div class="table-responsive">
-      <table class="table table-hover align-middle">
+      <table class="table table-hover table-sm align-middle mb-0">
         <thead class="table-light">
           <tr>
-            <th style="width: 80px;">ID</th>
-            <th>Nome</th>
-            <th>Local</th>
-            <th>Período</th>
-            <th style="width: 120px;" class="text-center">Status</th>
-            <th style="width: 150px;" class="text-end">Ações</th>
+            <th width="8%">ID</th>
+            <th width="22%">Nome</th>
+            <th width="18%" class="d-none d-lg-table-cell">Local</th>
+            <th width="15%" class="d-none d-md-table-cell">Período</th>
+            <th width="12%" class="text-center">Status</th>
+            <th width="15%" class="text-end">Ações</th>
           </tr>
         </thead>
         <tbody>
           {% for feira in page_obj.object_list %}
             <tr>
               <td>
-                <div class="fw-semibold">#{{ feira.id }}</div>
+                <strong class="text-primary">#{{ feira.id }}</strong>
+                <small class="d-block d-md-none text-muted">{{ feira.periodo|default:"-"|truncatewords:3 }}</small>
               </td>
-              <td>
+
+              <td data-label="Nome">
                 <div class="fw-medium">{{ feira.nome|default:"Sem nome" }}</div>
+                <small class="d-block d-lg-none text-muted">
+                  {{ feira.local|default:"-"|truncatewords:4 }}
+                </small>
               </td>
-              <td>
+
+              <td class="d-none d-lg-table-cell">
                 {{ feira.local|default:"-" }}
               </td>
-              <td>
+
+              <td class="d-none d-md-table-cell">
                 {{ feira.periodo|default:"-"|truncatewords:5 }}
               </td>
-              <td class="text-center">
+
+              <td data-label="Status" class="text-center">
                 <span class="badge bg-{% if feira.status == 'published' %}success{% elif feira.status == 'draft' %}warning{% else %}secondary{% endif %}">
                   {% if feira.status == 'published' %}Publicado
                   {% elif feira.status == 'draft' %}Rascunho
@@ -82,25 +91,39 @@
                   {% else %}{{ feira.status }}{% endif %}
                 </span>
               </td>
+
               <td class="text-end">
                 <div class="btn-group" role="group">
                   <a href="{% url 'gestor:feira_update' feira.pk %}"
                      class="btn btn-sm btn-outline-primary"
-                     title="Editar">
+                     title="Editar"
+                     data-bs-toggle="tooltip">
                     <i class="fas fa-edit"></i>
                   </a>
                   <a href="{% url 'gestor:feira_duplicate' feira.pk %}"
                      class="btn btn-sm btn-outline-success"
                      title="Duplicar para próximo ano"
+                     data-bs-toggle="tooltip"
                      onclick="return confirm('Deseja duplicar a feira {{ feira.nome }} para o próximo ano?')">
                     <i class="fas fa-copy"></i>
                   </a>
-                  <a href="{% url 'gestor:feira_delete' feira.pk %}"
-                     class="btn btn-sm btn-outline-danger"
-                     title="Excluir"
-                     onclick="return confirm('Tem certeza que deseja excluir a feira {{ feira.nome }}?')">
-                    <i class="fas fa-trash-alt"></i>
-                  </a>
+
+                  <!-- Dropdown com opção de exclusão -->
+                  <button type="button"
+                          class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                          data-bs-toggle="dropdown"
+                          title="Mais ações">
+                    <i class="fas fa-ellipsis-v"></i>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                      <a href="{% url 'gestor:feira_delete' feira.pk %}"
+                         class="dropdown-item text-danger"
+                         onclick="return confirm('Tem certeza que deseja excluir a feira {{ feira.nome }}?')">
+                        <i class="fas fa-trash-alt me-2"></i>Excluir
+                      </a>
+                    </li>
+                  </ul>
                 </div>
               </td>
             </tr>
@@ -127,71 +150,286 @@
         </tbody>
       </table>
     </div>
+  </div>
 
-    <!-- PAGINAÇÃO -->
-    {% if page_obj.has_other_pages %}
-      <nav aria-label="Navegação de páginas" class="mt-4">
-        <ul class="pagination justify-content-center">
+  <!-- PAGINAÇÃO -->
+  {% if page_obj.has_other_pages %}
+  <div class="card-footer bg-white py-3">
+    <div class="d-flex justify-content-between align-items-center">
+      <div class="pagination-info">
+        <small class="text-muted d-none d-sm-inline">
+          <i class="fas fa-info-circle me-1"></i>
+          Mostrando {{ page_obj.start_index }}-{{ page_obj.end_index }} de {{ page_obj.paginator.count }} feiras
+        </small>
+        <small class="text-muted d-sm-none">
+          {{ page_obj.paginator.count }} items
+        </small>
+      </div>
+      <nav aria-label="Navegação de página">
+        <ul class="pagination pagination-sm mb-0">
           {% if page_obj.has_previous %}
             <li class="page-item">
-              <a class="page-link" href="?{% if search %}search={{ search }}&{% endif %}{% if status_filter %}status={{ status_filter }}&{% endif %}page=1">
-                <i class="fas fa-angle-double-left"></i>
+              <a class="page-link" href="?page=1{% if search %}&search={{ search }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}" aria-label="Primeiro">
+                <span aria-hidden="true" class="d-none d-sm-inline">&laquo;&laquo;</span>
+                <span aria-hidden="true" class="d-sm-none">&laquo;</span>
               </a>
             </li>
-            <li class="page-item">
-              <a class="page-link" href="?{% if search %}search={{ search }}&{% endif %}{% if status_filter %}status={{ status_filter }}&{% endif %}page={{ page_obj.previous_page_number }}">
-                <i class="fas fa-angle-left"></i>
+            <li class="page-item d-none d-sm-inline">
+              <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}" aria-label="Anterior">
+                <span aria-hidden="true">&laquo;</span>
               </a>
             </li>
           {% endif %}
 
-          {% for num in page_obj.paginator.page_range %}
-            {% if page_obj.number == num %}
-              <li class="page-item active">
-                <span class="page-link">{{ num }}</span>
-              </li>
-            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-              <li class="page-item">
-                <a class="page-link" href="?{% if search %}search={{ search }}&{% endif %}{% if status_filter %}status={{ status_filter }}&{% endif %}page={{ num }}">
-                  {{ num }}
-                </a>
-              </li>
-            {% endif %}
-          {% endfor %}
+          <!-- Desktop: mostra várias páginas -->
+          <div class="d-none d-sm-inline">
+            {% for i in page_obj.paginator.page_range %}
+              {% if page_obj.number == i %}
+                <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+              {% elif i > page_obj.number|add:'-3' and i < page_obj.number|add:'3' %}
+                <li class="page-item"><a class="page-link" href="?page={{ i }}{% if search %}&search={{ search }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">{{ i }}</a></li>
+              {% endif %}
+            {% endfor %}
+          </div>
+
+          <!-- Mobile: mostra apenas página atual -->
+          <li class="page-item active d-sm-none">
+            <span class="page-link">{{ page_obj.number }}/{{ page_obj.paginator.num_pages }}</span>
+          </li>
 
           {% if page_obj.has_next %}
-            <li class="page-item">
-              <a class="page-link" href="?{% if search %}search={{ search }}&{% endif %}{% if status_filter %}status={{ status_filter }}&{% endif %}page={{ page_obj.next_page_number }}">
-                <i class="fas fa-angle-right"></i>
+            <li class="page-item d-none d-sm-inline">
+              <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}" aria-label="Próximo">
+                <span aria-hidden="true">&raquo;</span>
               </a>
             </li>
             <li class="page-item">
-              <a class="page-link" href="?{% if search %}search={{ search }}&{% endif %}{% if status_filter %}status={{ status_filter }}&{% endif %}page={{ page_obj.paginator.num_pages }}">
-                <i class="fas fa-angle-double-right"></i>
+              <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search %}&search={{ search }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}" aria-label="Último">
+                <span aria-hidden="true" class="d-none d-sm-inline">&raquo;&raquo;</span>
+                <span aria-hidden="true" class="d-sm-none">&raquo;</span>
               </a>
             </li>
           {% endif %}
         </ul>
       </nav>
-    {% endif %}
-
-
+    </div>
   </div>
+  {% endif %}
 </div>
+{% endblock %}
 
+{% block extra_css %}
+<style>
+/* ===================================
+   ESTILOS RESPONSIVOS PARA MOBILE
+   =================================== */
+
+/* Transformar tabela em cards no mobile */
+@media screen and (max-width: 768px) {
+
+  /* Container com menos padding */
+  .card-body {
+    padding: 0.5rem !important;
+  }
+
+  /* Esconder cabeçalho da tabela */
+  .table thead {
+    display: none !important;
+  }
+
+  /* Cada linha vira um card COMPACTO */
+  .table tbody tr {
+    display: block !important;
+    margin-bottom: 8px !important;
+    background: white !important;
+    border: 1px solid #dee2e6 !important;
+    border-radius: 6px !important;
+    padding: 8px !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
+  }
+
+  /* Células viram blocos MENORES */
+  .table tbody td {
+    display: block !important;
+    text-align: left !important;
+    padding: 4px 6px !important;
+    border: none !important;
+    position: relative !important;
+    min-height: 24px !important;
+  }
+
+  /* ESCONDER TD DE LOCAL E PERÍODO COMPLETAMENTE NO MOBILE */
+  .table tbody td:nth-child(3),
+  .table tbody td:nth-child(4) {
+    display: none !important;
+  }
+
+  /* Labels para cada campo MAIS COMPACTO */
+  .table tbody td[data-label]:before {
+    content: attr(data-label) ": " !important;
+    font-weight: 600 !important;
+    color: #6c757d !important;
+    font-size: 0.75rem !important;
+    display: inline-block !important;
+    min-width: 50px !important;
+  }
+
+  /* Primeira célula (ID) sem label e MENOR */
+  .table tbody td:first-child {
+    padding-bottom: 6px !important;
+    border-bottom: 1px solid #f0f0f0 !important;
+    margin-bottom: 4px !important;
+    font-size: 0.95rem !important;
+  }
+
+  .table tbody td:first-child:before {
+    content: none !important;
+  }
+
+  /* Última célula (ações) centralizada */
+  .table tbody td:last-child {
+    text-align: center !important;
+    padding-top: 10px !important;
+    border-top: 1px solid #f0f0f0 !important;
+    margin-top: 8px !important;
+  }
+
+  .table tbody td:last-child:before {
+    content: none !important;
+  }
+
+  /* Badge de status mais visível */
+  .badge {
+    font-size: 0.75rem !important;
+    padding: 0.35rem 0.65rem !important;
+  }
+
+  /* Botões MAIORES e mais espaçados no mobile */
+  .btn-sm {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.9rem !important;
+    min-height: 40px !important;
+  }
+
+  /* Grupo de botões com mais espaço */
+  .btn-group {
+    display: flex !important;
+    gap: 6px !important;
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  /* Fazer botões ocuparem mais espaço horizontal */
+  .table tbody td:last-child .btn-group .btn {
+    flex: 1 !important;
+    max-width: 80px !important;
+  }
+
+  /* Filtros responsivos */
+  .form-select-sm, .form-control-sm {
+    font-size: 14px !important;
+    padding: 0.375rem 0.5rem !important;
+  }
+
+  /* Paginação compacta */
+  .pagination-sm .page-link {
+    padding: 0.375rem 0.5rem !important;
+    min-width: 36px !important;
+  }
+
+  /* Dropdown menu maior para toque */
+  .dropdown-menu {
+    min-width: 160px !important;
+  }
+
+  .dropdown-item {
+    padding: 0.5rem 1rem !important;
+    min-height: 38px !important;
+  }
+}
+
+/* Ajustes para telas muito pequenas */
+@media screen and (max-width: 576px) {
+
+  /* Título do card menor */
+  .card-title {
+    font-size: 1rem !important;
+  }
+
+  /* Esconder texto dos botões, mostrar só ícones */
+  .btn-sm span {
+    font-size: 0.8rem !important;
+  }
+
+  /* Campos de filtro ocupam metade da tela */
+  .col-6 {
+    padding: 0 4px !important;
+  }
+}
+
+/* Melhorias visuais gerais */
+.text-truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Prevenir zoom no iOS */
+input, select, textarea {
+  font-size: 16px !important;
+}
+
+/* Hover effects apenas em desktop */
+@media (hover: hover) {
+  .table-hover tbody tr:hover {
+    background-color: rgba(0, 123, 255, 0.05);
+  }
+}
+
+/* Safe area para iPhones com notch */
+@supports (padding: max(0px)) {
+  .card-body {
+    padding-left: max(0.5rem, env(safe-area-inset-left)) !important;
+    padding-right: max(0.5rem, env(safe-area-inset-right)) !important;
+  }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Auto-submit no filtro quando mudar
-    const statusSelect = document.querySelector('select[name="status"]');
+    // Inicializar tooltips (apenas desktop)
+    if (window.innerWidth > 768) {
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
 
-    if (statusSelect) {
-        statusSelect.addEventListener('change', function() {
-            this.form.submit();
+        // Auto-submit do formulário quando filtros mudarem
+        const selects = document.querySelectorAll('select[name="status"]');
+        selects.forEach(select => {
+            select.addEventListener('change', function() {
+                this.form.submit();
+            });
         });
     }
 
-    console.log('✅ Lista de feiras carregada!');
+    // Prevenir duplo clique em botões
+    document.querySelectorAll('.btn').forEach(btn => {
+        let clicking = false;
+        btn.addEventListener('click', function(e) {
+            if (clicking && !this.classList.contains('dropdown-toggle')) {
+                e.preventDefault();
+                return false;
+            }
+            clicking = true;
+            setTimeout(() => { clicking = false; }, 1000);
+        });
+    });
+
+    console.log('✅ Lista de feiras responsiva carregada');
+    console.log('📱 Largura da tela:', window.innerWidth, 'px');
 });
 </script>
-
 {% endblock %}
