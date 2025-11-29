@@ -15,11 +15,25 @@ class FeiraForm(forms.ModelForm):
         ('archived', 'Arquivado'),
     ]
 
+    EVENTOS_GRATUITOS_STATUS_CHOICES = [
+        ('', '--- Selecione ---'),
+        ('em_breve', 'Em Breve'),
+        ('disponivel', 'Disponível'),
+        ('nao_disponivel', 'Não Disponível'),
+    ]
+
     status = forms.ChoiceField(
         choices=STATUS_CHOICES,
         widget=forms.Select(attrs={'class': 'form-select'}),
         required=True,
         label='Status'
+    )
+
+    eventos_gratuitos_status = forms.ChoiceField(
+        choices=EVENTOS_GRATUITOS_STATUS_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-select'}),
+        required=False,
+        label='Status Eventos Gratuitos'
     )
 
     # Campo para editar credenciamento_categorias como JSON (gerenciado via JavaScript)
@@ -32,18 +46,19 @@ class FeiraForm(forms.ModelForm):
     class Meta:
         model = Feira
         fields = [
-            'status', 'nome', 'periodo', 'publico_alvo', 'credenciamento',
+            'status', 'nome', 'publico_alvo', 'credenciamento',
             'local', 'diferencial', 'Observacoes',
             'desconto_nivel_1', 'desconto_nivel_2',
             'desconto_cupom_1', 'desconto_cupom_2',
             'ingresso_black', 'ingresso_experience',
             'Infraestrutura_e_servicos', 'Oportunidades_de_negocio',
             'Gatilhos_de_urgencia', 'link_expositores', 'link_embaixadores',
-            'credenciamento_categorias'
+            'link_caravanas', 'credenciamento_categorias',
+            'data_inicio', 'data_fim', 'data_fim_edicao_anterior',
+            'eventos_gratuitos_status', 'eventos_gratuitos'
         ]
         widgets = {
             'nome': forms.TextInput(attrs={'class': 'form-control'}),
-            'periodo': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
             'publico_alvo': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
             'credenciamento': forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
             'local': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
@@ -60,10 +75,14 @@ class FeiraForm(forms.ModelForm):
             'Gatilhos_de_urgencia': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'link_expositores': forms.URLInput(attrs={'class': 'form-control'}),
             'link_embaixadores': forms.URLInput(attrs={'class': 'form-control'}),
+            'link_caravanas': forms.URLInput(attrs={'class': 'form-control'}),
+            'data_inicio': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}, format='%Y-%m-%d'),
+            'data_fim': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}, format='%Y-%m-%d'),
+            'data_fim_edicao_anterior': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}, format='%Y-%m-%d'),
+            'eventos_gratuitos': forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
         }
         labels = {
             'nome': 'Nome da Feira',
-            'periodo': 'Período',
             'publico_alvo': 'Público Alvo',
             'credenciamento': 'Credenciamento',
             'local': 'Local',
@@ -80,6 +99,12 @@ class FeiraForm(forms.ModelForm):
             'Gatilhos_de_urgencia': 'Gatilhos de Urgência',
             'link_expositores': 'Link Expositores',
             'link_embaixadores': 'Link Embaixadores',
+            'link_caravanas': 'Link Caravanas',
+            'data_inicio': 'Data de Início',
+            'data_fim': 'Data de Fim',
+            'data_fim_edicao_anterior': 'Data Fim Edição Anterior',
+            'eventos_gratuitos_status': 'Status Eventos Gratuitos',
+            'eventos_gratuitos': 'Eventos Gratuitos',
         }
 
     def __init__(self, *args, **kwargs):

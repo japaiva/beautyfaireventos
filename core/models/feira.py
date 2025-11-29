@@ -50,6 +50,27 @@ class Feira(models.Model):
     # Links
     link_expositores = models.CharField(max_length=255, null=True, blank=True)
     link_embaixadores = models.CharField(max_length=255, null=True, blank=True)
+    link_caravanas = models.CharField(max_length=255, null=True, blank=True, verbose_name='Link Caravanas')
+
+    # Datas
+    data_inicio = models.DateField(null=True, blank=True, verbose_name='Data de Início')
+    data_fim = models.DateField(null=True, blank=True, verbose_name='Data de Fim')
+    data_fim_edicao_anterior = models.DateField(null=True, blank=True, verbose_name='Data Fim Edição Anterior')
+
+    # Eventos Gratuitos
+    EVENTOS_GRATUITOS_STATUS_CHOICES = [
+        ('em_breve', 'Em Breve'),
+        ('disponivel', 'Disponível'),
+        ('nao_disponivel', 'Não Disponível'),
+    ]
+    eventos_gratuitos_status = models.CharField(
+        max_length=50,
+        null=True,
+        blank=True,
+        choices=EVENTOS_GRATUITOS_STATUS_CHOICES,
+        verbose_name='Status Eventos Gratuitos'
+    )
+    eventos_gratuitos = models.TextField(null=True, blank=True, verbose_name='Eventos Gratuitos')
 
     # Embedding para AI (não usar diretamente no Django)
     # embedding = models.TextField(null=True, blank=True)  # Tipo USER-DEFINED do Postgres
@@ -59,7 +80,7 @@ class Feira(models.Model):
         managed = False  # Django NÃO vai criar/modificar esta tabela
         verbose_name = 'Feira'
         verbose_name_plural = 'Feiras'
-        ordering = ['nome']
+        ordering = ['-data_inicio', 'nome']
 
     def __str__(self):
         return self.nome or f'Feira #{self.id}'

@@ -6,7 +6,7 @@ from django.contrib.auth.hashers import make_password
 from core.models import Usuario
 
 class UsuarioForm(forms.ModelForm):
-    """Formulário simplificado para usuários SynchroBI"""
+    """Formulário simplificado para usuários do Portal de Eventos"""
     
     confirm_password = forms.CharField(
         widget=forms.PasswordInput(attrs={'class': 'form-control'}), 

@@ -69,9 +69,57 @@
                 </div>
               </div>
 
-              <!-- LINHA 2: LOCAL E PERÍODO -->
+              <!-- LINHA 2: DATAS (3 na mesma linha) -->
               <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
+                  <!-- DATA INÍCIO -->
+                  <div class="mb-3">
+                    <label for="{{ form.data_inicio.id_for_label }}" class="form-label fw-semibold">
+                      Data de Início
+                    </label>
+                    {{ form.data_inicio }}
+                    {% if form.data_inicio.errors %}
+                      <div class="text-danger small mt-1">
+                        <i class="fas fa-exclamation-triangle me-1"></i>{{ form.data_inicio.errors.0 }}
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="col-md-4">
+                  <!-- DATA FIM -->
+                  <div class="mb-3">
+                    <label for="{{ form.data_fim.id_for_label }}" class="form-label fw-semibold">
+                      Data de Fim
+                    </label>
+                    {{ form.data_fim }}
+                    {% if form.data_fim.errors %}
+                      <div class="text-danger small mt-1">
+                        <i class="fas fa-exclamation-triangle me-1"></i>{{ form.data_fim.errors.0 }}
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="col-md-4">
+                  <!-- DATA FIM EDIÇÃO ANTERIOR -->
+                  <div class="mb-3">
+                    <label for="{{ form.data_fim_edicao_anterior.id_for_label }}" class="form-label fw-semibold">
+                      Data Fim Ed. Anterior
+                    </label>
+                    {{ form.data_fim_edicao_anterior }}
+                    {% if form.data_fim_edicao_anterior.errors %}
+                      <div class="text-danger small mt-1">
+                        <i class="fas fa-exclamation-triangle me-1"></i>{{ form.data_fim_edicao_anterior.errors.0 }}
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+
+              <!-- LINHA 3: LOCAL -->
+              <div class="row">
+                <div class="col-md-12">
                   <!-- LOCAL -->
                   <div class="mb-3">
                     <label for="{{ form.local.id_for_label }}" class="form-label fw-semibold">
@@ -81,21 +129,6 @@
                     {% if form.local.errors %}
                       <div class="text-danger small mt-1">
                         <i class="fas fa-exclamation-triangle me-1"></i>{{ form.local.errors.0 }}
-                      </div>
-                    {% endif %}
-                  </div>
-                </div>
-
-                <div class="col-md-6">
-                  <!-- PERÍODO -->
-                  <div class="mb-3">
-                    <label for="{{ form.periodo.id_for_label }}" class="form-label fw-semibold">
-                      Período
-                    </label>
-                    {{ form.periodo }}
-                    {% if form.periodo.errors %}
-                      <div class="text-danger small mt-1">
-                        <i class="fas fa-exclamation-triangle me-1"></i>{{ form.periodo.errors.0 }}
                       </div>
                     {% endif %}
                   </div>
@@ -313,7 +346,7 @@
           </div>
         </div>
 
-        <!-- LINKS - 2 COLUNAS -->
+        <!-- LINKS - 3 COLUNAS -->
         <div class="col-12">
           <div class="card">
             <div class="card-header bg-light">
@@ -323,7 +356,7 @@
             </div>
             <div class="card-body">
               <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                   <!-- LINK EXPOSITORES -->
                   <div class="mb-3">
                     <label for="{{ form.link_expositores.id_for_label }}" class="form-label fw-semibold">
@@ -338,7 +371,7 @@
                   </div>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-4">
                   <!-- LINK EMBAIXADORES -->
                   <div class="mb-3">
                     <label for="{{ form.link_embaixadores.id_for_label }}" class="form-label fw-semibold">
@@ -348,6 +381,65 @@
                     {% if form.link_embaixadores.errors %}
                       <div class="text-danger small mt-1">
                         <i class="fas fa-exclamation-triangle me-1"></i>{{ form.link_embaixadores.errors.0 }}
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="col-md-4">
+                  <!-- LINK CARAVANAS -->
+                  <div class="mb-3">
+                    <label for="{{ form.link_caravanas.id_for_label }}" class="form-label fw-semibold">
+                      Link Caravanas
+                    </label>
+                    {{ form.link_caravanas }}
+                    {% if form.link_caravanas.errors %}
+                      <div class="text-danger small mt-1">
+                        <i class="fas fa-exclamation-triangle me-1"></i>{{ form.link_caravanas.errors.0 }}
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- EVENTOS GRATUITOS -->
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header bg-light">
+              <h6 class="card-title mb-0">
+                <i class="fas fa-gift me-2"></i>Eventos Gratuitos
+              </h6>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-4">
+                  <!-- STATUS EVENTOS GRATUITOS -->
+                  <div class="mb-3">
+                    <label for="{{ form.eventos_gratuitos_status.id_for_label }}" class="form-label fw-semibold">
+                      Status
+                    </label>
+                    {{ form.eventos_gratuitos_status }}
+                    {% if form.eventos_gratuitos_status.errors %}
+                      <div class="text-danger small mt-1">
+                        <i class="fas fa-exclamation-triangle me-1"></i>{{ form.eventos_gratuitos_status.errors.0 }}
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="col-md-8">
+                  <!-- EVENTOS GRATUITOS -->
+                  <div class="mb-3">
+                    <label for="{{ form.eventos_gratuitos.id_for_label }}" class="form-label fw-semibold">
+                      Informações
+                    </label>
+                    {{ form.eventos_gratuitos }}
+                    {% if form.eventos_gratuitos.errors %}
+                      <div class="text-danger small mt-1">
+                        <i class="fas fa-exclamation-triangle me-1"></i>{{ form.eventos_gratuitos.errors.0 }}
                       </div>
                     {% endif %}
                   </div>

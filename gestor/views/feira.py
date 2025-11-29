@@ -18,7 +18,7 @@ def feira_list(request):
     # Filtro padrão: published (se não especificado)
     status_filter = request.GET.get('status', 'published')
 
-    feiras = Feira.objects.all().order_by('-id')
+    feiras = Feira.objects.all().order_by('data_inicio')
 
     if search:
         feiras = feiras.filter(
@@ -173,6 +173,17 @@ def feira_duplicate(request, pk):
     nova_feira.credenciamento_categorias = feira_original.credenciamento_categorias
     nova_feira.link_expositores = feira_original.link_expositores
     nova_feira.link_embaixadores = feira_original.link_embaixadores
+    nova_feira.link_caravanas = feira_original.link_caravanas
+
+    # Datas: ao duplicar, a data_fim_edicao_anterior recebe a data_fim da feira original
+    nova_feira.data_fim_edicao_anterior = feira_original.data_fim
+    # data_inicio e data_fim ficam vazias para serem preenchidas manualmente
+    nova_feira.data_inicio = None
+    nova_feira.data_fim = None
+
+    # Eventos gratuitos
+    nova_feira.eventos_gratuitos_status = feira_original.eventos_gratuitos_status
+    nova_feira.eventos_gratuitos = feira_original.eventos_gratuitos
 
     # Salvar nova feira
     nova_feira.save()

@@ -53,9 +53,9 @@
         <thead class="table-light">
           <tr>
             <th width="8%">ID</th>
-            <th width="22%">Nome</th>
-            <th width="18%" class="d-none d-lg-table-cell">Local</th>
-            <th width="15%" class="d-none d-md-table-cell">Período</th>
+            <th width="25%">Nome</th>
+            <th width="15%" class="d-none d-md-table-cell">Data Início</th>
+            <th width="20%" class="d-none d-lg-table-cell">Local</th>
             <th width="12%" class="text-center">Status</th>
             <th width="15%" class="text-end">Ações</th>
           </tr>
@@ -65,7 +65,9 @@
             <tr>
               <td>
                 <strong class="text-primary">#{{ feira.id }}</strong>
-                <small class="d-block d-md-none text-muted">{{ feira.periodo|default:"-"|truncatewords:3 }}</small>
+                {% if feira.data_inicio %}
+                  <small class="d-block d-md-none text-muted">{{ feira.data_inicio|date:"d/m/Y" }}</small>
+                {% endif %}
               </td>
 
               <td data-label="Nome">
@@ -75,12 +77,16 @@
                 </small>
               </td>
 
-              <td class="d-none d-lg-table-cell">
-                {{ feira.local|default:"-" }}
+              <td class="d-none d-md-table-cell">
+                {% if feira.data_inicio %}
+                  <span class="text-primary fw-medium">{{ feira.data_inicio|date:"d/m/Y" }}</span>
+                {% else %}
+                  <span class="text-muted">-</span>
+                {% endif %}
               </td>
 
-              <td class="d-none d-md-table-cell">
-                {{ feira.periodo|default:"-"|truncatewords:5 }}
+              <td class="d-none d-lg-table-cell">
+                {{ feira.local|default:"-" }}
               </td>
 
               <td data-label="Status" class="text-center">

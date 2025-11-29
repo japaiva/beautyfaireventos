@@ -4,14 +4,18 @@ from .models import Feira, Congresso
 
 @admin.register(Feira)
 class FeiraAdmin(admin.ModelAdmin):
-    list_display = ['id', 'nome', 'periodo', 'local', 'status']
-    list_filter = ['status']
+    list_display = ['id', 'nome', 'data_inicio', 'data_fim', 'local', 'status']
+    list_filter = ['status', 'eventos_gratuitos_status']
     search_fields = ['nome', 'local']
     readonly_fields = ['id', 'date_created', 'date_updated', 'user_created', 'user_updated']
+    ordering = ['-data_inicio', 'nome']
 
     fieldsets = (
         ('Informações Básicas', {
             'fields': ('id', 'status', 'nome', 'periodo', 'local', 'publico_alvo')
+        }),
+        ('Datas', {
+            'fields': ('data_inicio', 'data_fim', 'data_fim_edicao_anterior')
         }),
         ('Credenciamento', {
             'fields': ('credenciamento', 'credenciamento_categorias')
@@ -22,8 +26,11 @@ class FeiraAdmin(admin.ModelAdmin):
         ('Descontos', {
             'fields': ('desconto_nivel_1', 'desconto_nivel_2', 'desconto_cupom_1', 'desconto_cupom_2')
         }),
+        ('Eventos Gratuitos', {
+            'fields': ('eventos_gratuitos_status', 'eventos_gratuitos')
+        }),
         ('Links', {
-            'fields': ('link_expositores', 'link_embaixadores')
+            'fields': ('link_expositores', 'link_embaixadores', 'link_caravanas')
         }),
         ('Detalhes', {
             'fields': ('diferencial', 'Infraestrutura_e_servicos', 'Oportunidades_de_negocio',
